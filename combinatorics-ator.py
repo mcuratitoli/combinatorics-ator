@@ -25,6 +25,13 @@ class MyProgressPercentage():
         sys.stdout.write(s)
         sys.stdout.flush()
 
+
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+
 # ------------------------------------------------------------
 # Permutator with standard library for simple permutations
 # ------------------------------------------------------------
@@ -33,7 +40,7 @@ class StandardSimplePermutator():
         self.string = ''
         self.to_check = ''
         self.list_char = []
-        self.length = 0 # length of any permutation
+        self.length = 0 # length of string and any permutation
         self.num_p = 0 # number of all possible permutations
         self.start_time = None
 
@@ -43,13 +50,7 @@ class StandardSimplePermutator():
         for char in input_string:
             self.list_char.append(char)
         self.length = len(self.string)
-        self.num_p = self.factorial(self.length)
-
-    def factorial(self, n):
-        if n == 0:
-            return 1
-        else:
-            return n * self.factorial(n-1)
+        self.num_p = factorial(self.length)
 
     def check(self, temp):
         if  temp == self.to_check:
@@ -86,7 +87,7 @@ class MySimplePermutator():
     def __init__(self):
         self.string = ''
         self.to_check = ''
-        self.length = 0 # length of any permutation
+        self.length = 0 # length of string and any permutation
         self.num_p = 0 # number of all possible permutations
         self.start_time = None
         self.progress = MyProgressPercentage()
@@ -95,13 +96,7 @@ class MySimplePermutator():
         self.string = input_string
         self.to_check = check_string
         self.length = len(self.string)
-        self.num_p = self.factorial(self.length)
-
-    def factorial(self, n):
-        if n == 0:
-            return 1
-        else:
-            return n * self.factorial(n-1)
+        self.num_p = factorial(self.length)
 
     def check(self, temp):
         if temp == self.to_check:
@@ -129,16 +124,6 @@ class MySimplePermutator():
                 if not (self.permute(new_pre, new_post)):
                     return False
             return True
-
-            # for x in range(len_post):
-            #     new_pre = pre + post[x]
-            #     new_post = ''
-            #     for y in post:
-            #         if y != post[x]:
-            #             new_post += y
-            #     if not (self.permute(new_pre, new_post)):
-            #         return False
-            # return True
 
     def permutation(self):
         print('_________________________________')
