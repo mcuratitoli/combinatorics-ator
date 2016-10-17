@@ -125,40 +125,43 @@ class MyPermutator():
         self.to_check = to_check_string
         self.w2d = w2d
         self.string_length = len(self.string)
-        list_char_count = self.detect_count_repetitions()
         self.tot_p = factorial(self.string_length)
+        self.repetitions = self.detect_repetitions()
         if self.repetitions:
-            self.tot_p2 = int( factorial(self.string_length) / self.calculate_d(list_char_count) )
+            list = self.count_repetitions()
+            self.tot_p2 = int( factorial(self.string_length) / self.calculate_d(list) )
         if w2d == 0:
             self.progress = ProgressPercentage()
         if w2d == 2:
             self.progress = ProgressPercentage()
             self.writer = open('output_myPermutator.txt', 'w')
 
-    def detect_count_repetitions(self):
-        list_char_count =[]
-        temp = False
+    def detect_repetitions(self):
+        for x, char in enumerate(self.string):
+            for c in self.string[0:x]:
+                if c == char:
+                    return True
+        return False
+
+    def count_repetitions(self):
+        list =[]
+        match = False
         for char in self.string:
-            for c in list_char_count:
-                if c[0] == char:
-                    temp = True
-                    self.repetitions = True
-                    c[1] += 1
-            if not temp:
-                list_char_count.append([char, 1])
-        return list_char_count
+            for c in list:
+                if not match:
+                    if c[0] == char:
+                        match = True
+                        c[1] += 1
+            if not match:
+                list.append([char, 1])
+            match = False
+        return list
 
     def calculate_d(self, list):
         d = 1
         for x in list:
             d *= factorial(x[1])
         return d
-
-    def check_in_list(self, list, elem):
-        for x in list:
-            if x == elem:
-                return True
-        return False
 
     def what_to_do(self, permutation):
         if self.w2d == 0: # print progress percentage
@@ -168,6 +171,15 @@ class MyPermutator():
         if self.w2d == 2: # write on file permutation
             self.progress.step()
             self.writer.write(permutation + '\n')
+
+    def helper(self, pre, post, x):
+        new_pre = pre + post[x]
+        new_post = ''
+        for y, z in enumerate(post):
+            if y != x:
+                new_post += z
+        if not (self.permute(new_pre, new_post)):
+            return False
 
     def permute(self, pre, post):
         len_post = len(post)
@@ -179,26 +191,12 @@ class MyPermutator():
             else:
                 return True
         else:
-            list_in_loop = []
-            for x in range(len_post):
+            for x, c in enumerate(post):
                 if self.repetitions:
-                    if not self.check_in_list(list_in_loop, post[x]):
-                        list_in_loop.append(post[x])
-                        new_pre = pre + post[x]
-                        new_post = ''
-                        for y, z in enumerate(post):
-                            if y != x:
-                                new_post += z
-                        if not (self.permute(new_pre, new_post)):
-                            return False
+                    if not (c in post[0:x]):
+                        self.helper(pre, post, x)
                 else:
-                    new_pre = pre + post[x]
-                    new_post = ''
-                    for y, z in enumerate(post):
-                        if y != x:
-                            new_post += z
-                    if not (self.permute(new_pre, new_post)):
-                        return False
+                    self.helper(pre, post, x)
             return True
 
     def permutation(self):
@@ -217,8 +215,8 @@ class MyPermutator():
                 self.progress.set(self.tot_p2, 'permutating >_ ')
             else:
                 self.progress.set(self.tot_p, 'permutating >_ ')
-        self.start_time = time.time()
 
+        self.start_time = time.time()
         if self.permute('', self.string):
             if self.to_check:
                 print('\n<!> NOT found "%s"' %self.to_check)
@@ -254,6 +252,7 @@ class DoPermutations():
             self.init = True
 
     def main(self):
+
         while(not self.init):
             self.terminal_input()
             self.check_input_from_user()
