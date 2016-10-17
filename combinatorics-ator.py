@@ -111,6 +111,7 @@ class MyPermutator():
     def __init__(self):
         self.string = ''            # string to permutate
         self.to_check = ''          # string to find into permutations
+        self.find = False
         self.repetitions = False
         self.string_length = 0      # length of string
         self.tot_p = 0              # num of permutations without repetititons
@@ -182,22 +183,25 @@ class MyPermutator():
             return False
 
     def permute(self, pre, post):
-        len_post = len(post)
-        if len_post == 1:
-            pre += post
-            self.what_to_do(pre)
-            if self.to_check:
-                return not compare_string(self.to_check, pre)
+        if self.to_check and not self.find:
+            len_post = len(post)
+            if len_post == 1:
+                pre += post
+                self.what_to_do(pre)
+                if self.to_check:
+                    if compare_string(self.to_check, pre):
+                        self.find = True
+                        return False
+                    else:
+                        return True
             else:
-                return True
-        else:
-            for x, c in enumerate(post):
-                if self.repetitions:
-                    if not (c in post[0:x]):
+                for x, c in enumerate(post):
+                    if self.repetitions:
+                        if not (c in post[0:x]):
+                            self.helper(pre, post, x)
+                    else:
                         self.helper(pre, post, x)
-                else:
-                    self.helper(pre, post, x)
-            return True
+                return True
 
     def permutation(self):
         print('_____________________________________')
@@ -218,7 +222,7 @@ class MyPermutator():
 
         self.start_time = time.time()
         if self.permute('', self.string):
-            if self.to_check:
+            if self.to_check and not self.find:
                 print('\n<!> NOT found "%s"' %self.to_check)
         if not self.to_check:
             print()
